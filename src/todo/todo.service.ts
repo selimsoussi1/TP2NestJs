@@ -28,7 +28,7 @@ addTodo(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
 async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
   const todo = await this.todoRepository.findOne({ where: { id } });
   if (!todo) {
-    throw new Error(`Le Todo avec l'id ${id} n'existe pas`);
+    throw new Error(`Le Todo avec l'id ${id} mouch mawjoud`);
   }
   Object.assign(todo, updateTodoDto);
   return  this.todoRepository.save(todo);
@@ -38,29 +38,29 @@ async deleteTodo(id: number){
   const result = await this.todoRepository.delete(id);
 
   if (result.affected === 0) {
-    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+    throw new Error(`mel9inech ToDo  avec l'id ${id}`);
   }
 
-  return `Le todo avec l'id ${id} a été supprimé avec succès`;
+  return `Le todo avec l'id ${id} fasa5neh avec succès`;
 }
 
 async softDeleteTodo(id: number){
   const result = await this.todoRepository.softDelete(id);
 
   if (result.affected === 0) {
-    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+    throw new Error(`mel9inech ToDo avec l'id ${id}`);
   }
-  return `Le todo avec l'id ${id} a été supprimé (soft delete) avec succès`;
+  return `Le todo avec l'id ${id} fasa5neh (soft delete) avec succès`;
 }
 
 async restoreTodo(id: number){
   const result = await this.todoRepository.restore(id);
 
   if (result.affected === 0) {
-    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+    throw new Error(`mel9inech ToDo avec l'id ${id}`);
   }
 
-  return `Le todo avec l'id ${id} a été restauré avec succès`;
+  return `Le todo bil l'id ${id} rja3 avec succès`;
 }
 
   
@@ -88,7 +88,7 @@ async restoreTodo(id: number){
   async getTodoById(id: number): Promise<TodoEntity> {
     const todo = await this.todoRepository.findOne({ where: { id } });
     if (!todo) {
-      throw new NotFoundException(`Todo avec l'id ${id} n'existe pas`);
+      throw new NotFoundException(`Todo bil l'id ${id} mouch mawjoud`);
     }
     return todo;
   }
@@ -103,7 +103,7 @@ async restoreTodo(id: number){
     const query = this.todoRepository.createQueryBuilder('todo');
 
     if (search) {
-      query.andWhere('(todo.name LIKE :search OR todo.description LIKE :search)', {
+      query.andWhere('(todo.name mawjoud fi :search OR todo.description mawjoud fi :search)', {
         search: `%${search}%`,
       });
     }
