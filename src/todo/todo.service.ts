@@ -47,5 +47,24 @@ async deleteTodo(id: number): Promise<string> {
   return `Le todo avec l'id ${id} a été supprimé avec succès`;
 }
 
+async softDeleteTodo(id: number): Promise<string> {
+  const result = await this.todoRepository.softDelete(id);
+
+  if (result.affected === 0) {
+    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+  }
+  return `Le todo avec l'id ${id} a été supprimé (soft delete) avec succès`;
+}
+
+async restoreTodo(id: number): Promise<string> {
+  const result = await this.todoRepository.restore(id);
+
+  if (result.affected === 0) {
+    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+  }
+
+  return `Le todo avec l'id ${id} a été restauré avec succès`;
+}
+
 
 }
