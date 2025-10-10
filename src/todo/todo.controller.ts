@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoService } from './todo.service';
@@ -7,15 +7,10 @@ import { TodoService } from './todo.service';
 export class TodoController {
     constructor(private readonly todoService: TodoService) {}
   @Post()
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  create(@Body() createTodoDto: CreateTodoDto) {
-    return createTodoDto;
-  }
+@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+async create(@Body() createTodoDto: CreateTodoDto) {
+  return this.todoService.addTodo(createTodoDto);  // <-- appelle la méthode addTodo du service
+}
 
-  @Put(':id')
-  @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-  update(@Body() updateTodoDto: UpdateTodoDto) {
-    return updateTodoDto;
-  }
   
 }
