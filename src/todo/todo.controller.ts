@@ -12,7 +12,7 @@ export class TodoController {
 @Post()
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 async create(@Body() createTodoDto: CreateTodoDto) {
-  return this.todoService.addTodo(createTodoDto);  // <-- appelle la méthode addTodo du service
+  return this.todoService.addTodo(createTodoDto);  
 } 
 @Put(':id')
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
@@ -54,10 +54,10 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
     @Query('search') search?: string,
     @Query('status') status?: StatusEnum,
     @Query('page') page?: string,
-    @Query('limit') limit?: string,
+    @Query('nbpage') nbpage?: string,
   ): Promise<TodoEntity[]> {
     const pageNumber = page ? parseInt(page, 10) : 1;
-    const limitNumber = limit ? parseInt(limit, 10) : 10; 
+    const limitNumber = nbpage ? parseInt(nbpage, 5) : 5; 
     return this.todoService.findAll(search, status, pageNumber, limitNumber);
   }
 }

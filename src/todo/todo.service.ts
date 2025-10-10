@@ -94,11 +94,11 @@ async restoreTodo(id: number): Promise<string> {
     return todo;
   }
   
-  async findAll(
+ findAll(
      search?: string,
      status?: StatusEnum,
      page: number = 1,
-     limit: number = 10,
+     nbpage: number = 5,
     
     ): Promise<TodoEntity[]> {
     const query = this.todoRepository.createQueryBuilder('todo');
@@ -112,8 +112,7 @@ async restoreTodo(id: number): Promise<string> {
     if (status) {
       query.andWhere('todo.status = :status', { status });
     }
-     query.skip(page - 1); 
-     query.take(limit);
+     query.skip((page - 1)*nbpage).take(nbpage);
     return query.getMany();
   } 
 }
