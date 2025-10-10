@@ -10,7 +10,11 @@ export class TodoController {
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 async create(@Body() createTodoDto: CreateTodoDto) {
   return this.todoService.addTodo(createTodoDto);  // <-- appelle la méthode addTodo du service
+} 
+@Put(':id')
+@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
+async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
+  return this.todoService.updateTodo(id, updateTodoDto);
 }
 
-  
 }
