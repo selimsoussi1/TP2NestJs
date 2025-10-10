@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { StatusEnum } from './status.enum';
+import { StatusEnum } from '././status.enum';
 
 
 @Entity('todo')
