@@ -1,27 +1,33 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { StatusEnum } from '././status.enum';
-
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
+import { StatusEnum } from './status.enum';
 
 @Entity('todo')
-
 export class TodoEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Column({ length: 10 })
+  name: string;
 
-    @Column()
-    name: string;
+  @Column('text')
+  description: string;
 
-    @Column()
-    description: string;
+  // Date de création, automatique et immuable
+  @CreateDateColumn({ type: 'timestamp', update: false })
+  createdAt: Date;
 
-    @Column()
-    createdAt: Date;
+  // Date de dernière modification, automatique
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
-    @Column({
+  // Date de suppression, pour soft delete
+  @DeleteDateColumn({ type: 'timestamp', nullable: true })
+  deletedAt: Date | null;
+
+  @Column({
     type: 'enum',
     enum: StatusEnum,
-    default: StatusEnum.PENDING
-    })
-status: StatusEnum;
+    default: StatusEnum.PENDING,
+  })
+  status: StatusEnum;
 }
