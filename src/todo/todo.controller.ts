@@ -1,7 +1,8 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoService } from './todo.service';
+import { TodoEntity } from './todo.entity';
 
 @Controller('todo')
 export class TodoController {
@@ -40,4 +41,11 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
   async findAll() {
     return this.todoService.getAllTodos();
   }
+  
+  @Get(':id')
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<TodoEntity> {
+    return this.todoService.getTodoById(id);
+  }
+  
+
 }
