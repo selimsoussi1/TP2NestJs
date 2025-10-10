@@ -34,7 +34,7 @@ async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
   return  this.todoRepository.save(todo);
 }
 
-async deleteTodo(id: number): Promise<string> {
+async deleteTodo(id: number){
   const result = await this.todoRepository.delete(id);
 
   if (result.affected === 0) {
@@ -44,7 +44,7 @@ async deleteTodo(id: number): Promise<string> {
   return `Le todo avec l'id ${id} a été supprimé avec succès`;
 }
 
-async softDeleteTodo(id: number): Promise<string> {
+async softDeleteTodo(id: number){
   const result = await this.todoRepository.softDelete(id);
 
   if (result.affected === 0) {
@@ -53,7 +53,7 @@ async softDeleteTodo(id: number): Promise<string> {
   return `Le todo avec l'id ${id} a été supprimé (soft delete) avec succès`;
 }
 
-async restoreTodo(id: number): Promise<string> {
+async restoreTodo(id: number){
   const result = await this.todoRepository.restore(id);
 
   if (result.affected === 0) {
@@ -62,7 +62,6 @@ async restoreTodo(id: number): Promise<string> {
 
   return `Le todo avec l'id ${id} a été restauré avec succès`;
 }
-
 
   
   async countByStatus(): Promise<Record<StatusEnum, number>> {

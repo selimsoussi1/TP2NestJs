@@ -25,15 +25,15 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
     return this.todoService.deleteTodo(id);
   }
   @Delete('soft/:id')
-  async softDelete(@Param('id') id: number) {
+   softDelete(@Param('id') id: number) {
     return this.todoService.softDeleteTodo(id);
   }
-   @Patch('restore/:id')
+  @Patch('restore/:id')
   async restore(@Param('id') id: number) {
     return this.todoService.restoreTodo(id);
   }
    
-  @Get('stats')
+@Get('stats')
   async getStats() {
     return this.todoService.countByStatus();
   }
@@ -50,7 +50,7 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
   }
 
 @Get()
-  async getAllTodos(
+   getAllTodos(
     @Query('search') search?: string,
     @Query('status') status?: StatusEnum,
     @Query('page') page?: string,
