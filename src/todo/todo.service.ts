@@ -67,4 +67,29 @@ async restoreTodo(id: number): Promise<string> {
 }
 
 
+  // Retourne le nombre de todos pour chaque statut (simple à comprendre)
+  async countByStatus(): Promise<Record<StatusEnum, number>> {
+    // compte les todos dont status = PENDING
+    const pending = await this.todoRepository.count({
+      where: { status: StatusEnum.PENDING },
+    });
+
+    // compte les todos dont status = IN_PROGRESS
+    const inProgress = await this.todoRepository.count({
+      where: { status: StatusEnum.IN_PROGRESS },
+    });
+
+    // compte les todos dont status = DONE
+    const done = await this.todoRepository.count({
+      where: { status: StatusEnum.DONE },
+    });
+
+    // renvoie un objet structuré par statut
+    return {
+      [StatusEnum.PENDING]: pending,
+      [StatusEnum.IN_PROGRESS]: inProgress,
+      [StatusEnum.DONE]: done,
+    } as Record<StatusEnum, number>;
+  }
+
 }

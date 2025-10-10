@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoService } from './todo.service';
@@ -28,5 +28,10 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
    @Patch('restore/:id')
   async restore(@Param('id') id: number) {
     return this.todoService.restoreTodo(id);
+  }
+   
+  @Get('stats')
+  async getStats() {
+    return this.todoService.countByStatus();
   }
 }
