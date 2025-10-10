@@ -1,7 +1,7 @@
 // src/todo/todo.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { TodoEntity } from './todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { StatusEnum } from './status.enum';

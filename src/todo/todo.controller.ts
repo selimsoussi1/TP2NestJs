@@ -57,7 +57,7 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
     @Query('nbpage') nbpage?: string,
   ): Promise<TodoEntity[]> {
     const pageNumber = page ? parseInt(page, 10) : 1;
-    const limitNumber = nbpage ? parseInt(nbpage, 5) : 5; 
+    const limitNumber = nbpage ? parseInt(nbpage, 10) : 5; 
     return this.todoService.findAll(search, status, pageNumber, limitNumber);
   }
 }
