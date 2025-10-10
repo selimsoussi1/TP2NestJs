@@ -1,7 +1,7 @@
 // src/todo/todo.service.ts
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { TodoEntity } from './todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { StatusEnum } from './status.enum';
@@ -14,16 +14,13 @@ export class TodoService {
     private readonly todoRepository: Repository<TodoEntity>,
   ) {}
 
- // Ajouter un Todo dans la base
 addTodo(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
-    // Création de l'entité Todo
+
     const todo = this.todoRepository.create({
       name: createTodoDto.name,
       description: createTodoDto.description,
-      status: createTodoDto.status ? StatusEnum[createTodoDto.status.toUpperCase()] : undefined, // utilise l'enum StatusEnum
+      status: createTodoDto.status ? StatusEnum[createTodoDto.status.toUpperCase()] : undefined, 
     });
-
-    // Sauvegarde dans la base et retour de l'objet complet
      return this.todoRepository.save(todo);
     
   }
@@ -67,40 +64,56 @@ async restoreTodo(id: number): Promise<string> {
 }
 
 
-  // Retourne le nombre de todos pour chaque statut (simple à comprendre)
+  
   async countByStatus(): Promise<Record<StatusEnum, number>> {
-    // compte les todos dont status = PENDING
     const pending = await this.todoRepository.count({
       where: { status: StatusEnum.PENDING },
     });
-
-    // compte les todos dont status = IN_PROGRESS
     const inProgress = await this.todoRepository.count({
       where: { status: StatusEnum.IN_PROGRESS },
     });
-
-    // compte les todos dont status = DONE
     const done = await this.todoRepository.count({
       where: { status: StatusEnum.DONE },
     });
-
-    // renvoie un objet structuré par statut
     return {
       [StatusEnum.PENDING]: pending,
       [StatusEnum.IN_PROGRESS]: inProgress,
       [StatusEnum.DONE]: done,
     } as Record<StatusEnum, number>;
   }
+
   async getAllTodos(): Promise<TodoEntity[]> {
-    return this.todoRepository.find(); // SELECT * FROM todo
+    return this.todoRepository.find(); 
   }
   
-   async getTodoById(id: number): Promise<TodoEntity> {
+  async getTodoById(id: number): Promise<TodoEntity> {
     const todo = await this.todoRepository.findOne({ where: { id } });
     if (!todo) {
       throw new NotFoundException(`Todo avec l'id ${id} n'existe pas`);
     }
     return todo;
   }
+  
+  async findAll(
+     search?: string,
+     status?: StatusEnum,
+     page: number = 1,
+     limit: number = 10,
+    
+    ): Promise<TodoEntity[]> {
+    const query = this.todoRepository.createQueryBuilder('todo');
 
+    if (search) {
+      query.andWhere('(todo.name LIKE :search OR todo.description LIKE :search)', {
+        search: `%${search}%`,
+      });
+    }
+
+    if (status) {
+      query.andWhere('todo.status = :status', { status });
+    }
+     query.skip(page - 1); 
+     query.take(limit);
+    return query.getMany();
+  } 
 }
