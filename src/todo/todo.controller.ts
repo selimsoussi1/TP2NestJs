@@ -34,4 +34,10 @@ async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
   async getStats() {
     return this.todoService.countByStatus();
   }
+
+  
+  @Get() // GET /todo
+  async findAll() {
+    return this.todoService.getAllTodos();
+  }
 }

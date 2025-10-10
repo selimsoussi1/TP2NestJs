@@ -91,5 +91,9 @@ async restoreTodo(id: number): Promise<string> {
       [StatusEnum.DONE]: done,
     } as Record<StatusEnum, number>;
   }
+  async getAllTodos(): Promise<TodoEntity[]> {
+    return this.todoRepository.find(); // SELECT * FROM todo
+  }
+  
 
 }
