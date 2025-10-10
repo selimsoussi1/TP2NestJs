@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put, UsePipes, ValidationPipe } from '@nestjs/common';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { TodoService } from './todo.service';
@@ -16,5 +16,10 @@ async create(@Body() createTodoDto: CreateTodoDto) {
 async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
   return this.todoService.updateTodo(id, updateTodoDto);
 }
+
+@Delete(':id')
+  async delete(@Param('id') id: number) {
+    return this.todoService.deleteTodo(id);
+  }
 
 }

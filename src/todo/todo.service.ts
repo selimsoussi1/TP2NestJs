@@ -28,21 +28,24 @@ addTodo(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
     
   }
 
-  // src/todo/todo.service.ts
 async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
-  // 1️⃣ On cherche le Todo dans la base
   const todo = await this.todoRepository.findOne({ where: { id } });
-
-  // 2️⃣ Si le Todo n’existe pas → on renvoie une erreur
   if (!todo) {
     throw new Error(`Le Todo avec l'id ${id} n'existe pas`);
   }
-
-  // 3️⃣ On met à jour les champs (seulement ceux envoyés dans le body)
   Object.assign(todo, updateTodoDto);
-
-  // 4️⃣ On sauvegarde la mise à jour dans la base
   return  this.todoRepository.save(todo);
 }
+
+async deleteTodo(id: number): Promise<string> {
+  const result = await this.todoRepository.delete(id);
+
+  if (result.affected === 0) {
+    throw new Error(`Aucun todo trouvé avec l'id ${id}`);
+  }
+
+  return `Le todo avec l'id ${id} a été supprimé avec succès`;
+}
+
 
 }
