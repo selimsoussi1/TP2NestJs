@@ -1,117 +1,36 @@
-// src/todo/todo.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { TodoEntity } from './todo.entity';
-import { CreateTodoDto } from './dto/create-todo.dto';
-import { StatusEnum } from './status.enum';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 
 @Injectable()
 export class TodoService {
-  constructor(
-    @InjectRepository(TodoEntity)
-    private readonly todoRepository: Repository<TodoEntity>,
-  ) {}
+  constructor(@InjectRepository(TodoEntity) private repo: Repository<TodoEntity>) {}
 
-addTodo(createTodoDto: CreateTodoDto): Promise<TodoEntity> {
+  create(data: Partial<TodoEntity>) {
+    const t = this.repo.create(data);
+    return this.repo.save(t);
+  }
 
-    const todo = this.todoRepository.create({
-      name: createTodoDto.name,
-      description: createTodoDto.description,
-      status: createTodoDto.status ? StatusEnum[createTodoDto.status.toUpperCase()] : undefined, 
-    });
-     return this.todoRepository.save(todo);
+  findAll(userId: string) {
+    return this.repo.findBy({ userId });
+  }
+
+  async update(id: number, userId: string, patch: Partial<TodoEntity>) {
+    const todo = await this.repo.findOneBy({ id });
+    if (!todo) throw new NotFoundException('Todo not found');
+    if (todo.userId != userId) throw new ForbiddenException('Not owner');
+
+    await this.repo.update({ id }, patch);
+    return this.repo.findOneBy({ id });
+  }
+
+  async remove(id: number, userId: string) {
+    const todo = await this.repo.findOneBy({ id });
+    if (!todo) throw new NotFoundException('Todo not found');
+    if (todo.userId != userId) throw new ForbiddenException('Not owner');
     
+    return this.repo.remove(todo);
   }
-
-async updateTodo(id: number, updateTodoDto: UpdateTodoDto) {
-  const todo = await this.todoRepository.findOne({ where: { id } });
-  if (!todo) {
-    throw new Error(`Le Todo avec l'id ${id} mouch mawjoud`);
-  }
-  Object.assign(todo, updateTodoDto);
-  return  this.todoRepository.save(todo);
-}
-
-async deleteTodo(id: number){
-  const result = await this.todoRepository.delete(id);
-
-  if (result.affected === 0) {
-    throw new Error(`mel9inech ToDo  avec l'id ${id}`);
-  }
-
-  return `Le todo avec l'id ${id} fasa5neh avec succès`;
-}
-
-async softDeleteTodo(id: number){
-  const result = await this.todoRepository.softDelete(id);
-
-  if (result.affected === 0) {
-    throw new Error(`mel9inech ToDo avec l'id ${id}`);
-  }
-  return `Le todo avec l'id ${id} fasa5neh (soft delete) avec succès`;
-}
-
-async restoreTodo(id: number){
-  const result = await this.todoRepository.restore(id);
-
-  if (result.affected === 0) {
-    throw new Error(`mel9inech ToDo avec l'id ${id}`);
-  }
-
-  return `Le todo bil l'id ${id} rja3 avec succès`;
-}
-
-  
-  async countByStatus(): Promise<Record<StatusEnum, number>> {
-    const pending = await this.todoRepository.count({
-      where: { status: StatusEnum.PENDING },
-    });
-    const inProgress = await this.todoRepository.count({
-      where: { status: StatusEnum.IN_PROGRESS },
-    });
-    const done = await this.todoRepository.count({
-      where: { status: StatusEnum.DONE },
-    });
-    return {
-      [StatusEnum.PENDING]: pending,
-      [StatusEnum.IN_PROGRESS]: inProgress,
-      [StatusEnum.DONE]: done,
-    } as Record<StatusEnum, number>;
-  }
-
-  async getAllTodos(): Promise<TodoEntity[]> {
-    return this.todoRepository.find(); 
-  }
-  
-  async getTodoById(id: number): Promise<TodoEntity> {
-    const todo = await this.todoRepository.findOne({ where: { id } });
-    if (!todo) {
-      throw new NotFoundException(`Todo bil l'id ${id} mouch mawjoud`);
-    }
-    return todo;
-  }
-  
- findAll(
-     search?: string,
-     status?: StatusEnum,
-     page: number = 1,
-     nbpage: number = 5,
-    
-    ): Promise<TodoEntity[]> {
-    const query = this.todoRepository.createQueryBuilder('todo');
-
-    if (search) {
-      query.andWhere('(todo.name mawjoud fi :search OR todo.description mawjoud fi :search)', {
-        search: `%${search}%`,
-      });
-    }
-
-    if (status) {
-      query.andWhere('todo.status = :status', { status });
-    }
-     query.skip((page - 1)*nbpage).take(nbpage);
-    return query.getMany();
-  } 
 }

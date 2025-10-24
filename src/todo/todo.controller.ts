@@ -1,63 +1,32 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, Delete, Req, ParseIntPipe } from '@nestjs/common';
+import { TodoService } from './todo.service';
+import { Request } from 'express';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
-import { TodoService } from './todo.service';
-import { TodoEntity } from './todo.entity';
-import { StatusEnum } from './status.enum';
 
 @Controller('todo')
 export class TodoController {
-    constructor(private readonly todoService: TodoService) {}
+  constructor(private readonly todoservice: TodoService) {}
 
-@Post()
-@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-async create(@Body() createTodoDto: CreateTodoDto) {
-  return this.todoService.addTodo(createTodoDto);  
-} 
-@Put(':id')
-@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
-async update(@Param('id') id: number, @Body() updateTodoDto: UpdateTodoDto) {
-  return this.todoService.updateTodo(id, updateTodoDto);
-}
-
-@Delete(':id')
-  async delete(@Param('id') id: number) {
-    return this.todoService.deleteTodo(id);
-  }
-  @Delete('soft/:id')
-   softDelete(@Param('id') id: number) {
-    return this.todoService.softDeleteTodo(id);
-  }
-  @Patch('restore/:id')
-  async restore(@Param('id') id: number) {
-    return this.todoService.restoreTodo(id);
-  }
-   
-@Get('stats')
-  async getStats() {
-    return this.todoService.countByStatus();
+  @Get()
+  getAll(@Req() req: Request & { userId?: string }) {
+    const userId = req.userId as string;
+    return this.todoservice.findAll(userId);
   }
 
-  
- /*@Get() // GET /todo
-  async findAll() {
-    return this.todoService.getAllTodos();
-  }*/
-  
-  @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<TodoEntity> {
-    return this.todoService.getTodoById(id);
+  @Post()
+  create(@Body() body: CreateTodoDto, @Req() req: Request & { userId?: string }) {
+    const userId = req.userId as string;
+    return this.todoservice.create({ ...body, userId });
   }
 
-@Get()
-   getAllTodos(
-    @Query('search') search?: string,
-    @Query('status') status?: StatusEnum,
-    @Query('page') page?: string,
-    @Query('nbpage') nbpage?: string,
-  ): Promise<TodoEntity[]> {
-    const pageNumber = page ? parseInt(page, 10) : 1;
-    const limitNumber = nbpage ? parseInt(nbpage, 10) : 5; 
-    return this.todoService.findAll(search, status, pageNumber, limitNumber);
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() body: UpdateTodoDto, @Req() req: Request & { userId?: string }) {
+    return this.todoservice.update(id, req.userId as string, body as any);
+  }
+
+  @Delete(':id')
+  remove(@Param('id', ParseIntPipe) id: number, @Req() req: Request & { userId?: string }) {
+    return this.todoservice.remove(id, req.userId as string);
   }
 }

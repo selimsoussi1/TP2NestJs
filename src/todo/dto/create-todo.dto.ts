@@ -1,6 +1,7 @@
 
-import { IsNotEmpty, IsString, MinLength, MaxLength, IsIn } from 'class-validator';
+import { IsNotEmpty, IsString, MinLength, MaxLength, IsEnum, IsOptional } from 'class-validator';
 import { ValidationMessages } from '../../common/messages/validation-messages';
+import { StatusEnum } from '../status.enum';
 
 export class CreateTodoDto {
   @IsNotEmpty({ message: ValidationMessages.NAME_REQUIRED })
@@ -14,7 +15,10 @@ export class CreateTodoDto {
   @MinLength(10, { message: ValidationMessages.DESCRIPTION_TOO_SHORT })
   description: string;
 
-  @IsIn(['pending', 'in_progress', 'done'], { message: ValidationMessages.STATUS_INVALID })
-  status: 'pending' | 'in_progress' | 'done';
+  @IsEnum(StatusEnum, { message: ValidationMessages.STATUS_INVALID })
+  status: StatusEnum;
+  
+  @IsOptional()
+  userId: number;
 }
 

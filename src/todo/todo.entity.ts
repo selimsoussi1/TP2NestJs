@@ -4,9 +4,6 @@ import { BaseEntity } from '../common/entities/base.entity';
 
 @Entity('todo')
 export class TodoEntity extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ length: 10 })
   name: string;
   @Column('text')
@@ -17,4 +14,7 @@ export class TodoEntity extends BaseEntity {
     default: StatusEnum.PENDING,
   })
   status: StatusEnum;
+
+  @Column()
+  userId: string;
 }
