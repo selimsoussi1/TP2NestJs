@@ -13,6 +13,7 @@ import { CvModule } from './cv/cv.module';
 import { UserModule } from './user/user.module';
 import { SkillModule } from './skill/skill.module';
 import { AuthMiddleware } from './middleware/auth/auth.middleware';
+import { CrudService } from './services/crud.services';
 
 @Module({
   imports: [
@@ -32,22 +33,22 @@ import { AuthMiddleware } from './middleware/auth/auth.middleware';
       database: 'test',
       entities: ["dist/**/*.entity{.ts,.js}"],
       autoLoadEntities: true,
-      synchronize: true, // Génère automatiquement les tables
+      synchronize: true, 
       logging: true,
     }),
     TypeOrmModule.forFeature([TodoEntity]),
     CvModule,
     UserModule,
-    SkillModule // Injection du repository
+    SkillModule 
   ],
   controllers: [
     AppController,
-    TodoController // Controller pour gérer les routes /todo
+    TodoController 
   ],
   providers: [
     AppService,
     TodoService,
-     // Service pour la logique métier
+    CrudService,
   ],
 })
 export class AppModule implements NestModule {
@@ -56,7 +57,8 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .forRoutes(
         { path: 'todo', method: RequestMethod.POST },
-        { path: 'todo/*', method: RequestMethod.ALL }
+        { path: 'todo/*', method: RequestMethod.PATCH },
+         { path: 'todo/*', method: RequestMethod.DELETE},
       );
   }
 }

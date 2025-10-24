@@ -19,6 +19,7 @@ export class CvController {
   @Post()
   create(
     @Body() createCvDto: CreateCvDto,
+    
   ) {
     return this.cvService.create(createCvDto);
   }
