@@ -2,7 +2,7 @@ import { Repository, UpdateResult } from 'typeorm';
 import { NotFoundException  } from '@nestjs/common';
 
 export class CrudService<Entity>  {
-  constructor(private repository) {}   //////
+  constructor(private repository) {} 
 
   findAll(options): Promise<Entity[]> {
     return this.repository.find();
